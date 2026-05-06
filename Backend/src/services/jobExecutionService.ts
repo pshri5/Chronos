@@ -37,8 +37,8 @@ export const executeJobService = async (
   await job.save();
 
   try {
-    // Simulate job execution (in a real system, this would actually execute the job payload)
-    // For now, we'll just simulate success or failure based on a simple condition
+    // Simulate job execution success or failure based on simple condition
+
     const shouldFail = Math.random() < 0.1; // 10% chance of failure for demo
     
     if (shouldFail) {
