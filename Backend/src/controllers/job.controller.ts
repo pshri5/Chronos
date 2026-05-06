@@ -225,3 +225,43 @@ export const deleteJob = asyncHandler(async (req: Request, res: Response) => {
     .status(200)
     .json(new apiResponse(200, null, "Job deleted successfully"));
 });
+
+// Execute a job manually (for testing or immediate execution)
+export const executeJob = asyncHandler(async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+
+  try {
+    const result = await executeJobService(
+      jobId,
+      new mongoose.Types.ObjectId(req.user?._id)
+    );
+    
+    return res
+      .status(200)
+      .json(new apiResponse(200, result.job, result.message));
+  } catch (error: any) {
+    return res
+      .status(error.message.includes("not found") ? 404 : 400)
+      .json(new apiResponse(error.message.includes("not found") ? 404 : 400, null, error.message));
+  }
+});
+
+// Cancel a job
+export const cancelJob = asyncHandler(async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+
+  try {
+    const result = await cancelJobService(
+      jobId,
+      new mongoose.Types.ObjectId(req.user?._id)
+    );
+    
+    return res
+      .status(200)
+      .json(new apiResponse(200, result.job, result.message));
+  } catch (error: any) {
+    return res
+      .status(error.message.includes("not found") ? 404 : 400)
+      .json(new apiResponse(error.message.includes("not found") ? 404 : 400, null, error.message));
+  }
+});
