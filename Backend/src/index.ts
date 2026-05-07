@@ -2,6 +2,7 @@ import { connectDB, disconnectDB } from "./db/index.js";
 import app from "./app.js";
 import jobRoutes from "./routes/job.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import { jobQueueService } from "./services/jobQueueService.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -54,6 +55,9 @@ const startServer = async () => {
     await connectDB();
     app.listen(PORT, () => {
       console.log(`⚙️  Server is running at http://localhost:${PORT}`);
+      
+      // Start the job queue worker after server starts
+      jobQueueService.start();
     });
   } catch (error) {
     console.log("Failed to start server:", error);
@@ -66,6 +70,8 @@ startServer();
 // Handle graceful shutdown
 process.on("SIGINT", async () => {
   console.log("\nShutting down gracefully...");
+  // Stop the job queue worker
+  jobQueueService.stop();
   await mongoose.disconnect();
   process.exit(0);
 });
