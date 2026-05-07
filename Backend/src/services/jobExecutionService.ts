@@ -1,12 +1,13 @@
 import { Job } from "../models/job.model.js";
 import { Notification } from "../models/notification.model.js";
+import { JobLog } from "../models/jobLog.model.js";
 import mongoose from "mongoose";
 
 /**
  * Execute a job with given parameters
  * This service handles the core execution logic that can be used by:
  * 1. Manual execution endpoint
- * 2. Background job worker (to be implemented)
+ * 2. Background job worker
  */
 export const executeJobService = async (
   jobId: string,
@@ -36,9 +37,17 @@ export const executeJobService = async (
   job.lastError = null;
   await job.save();
 
+  // Create job log entry for job start
+  const startTime = Date.now();
+  await JobLog.create({
+    jobId: job._id,
+    status: "started",
+    message: "Job execution started",
+    executedAt: new Date()
+  });
+
   try {
     // Simulate job execution success or failure based on simple condition
-
     const shouldFail = Math.random() < 0.1; // 10% chance of failure for demo
     
     if (shouldFail) {
@@ -46,12 +55,24 @@ export const executeJobService = async (
     }
 
     // Job executed successfully
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    
     job.status = "completed";
     job.retryCount = 0; // Reset retry count on success
     job.lastError = null;
     
     // Save the updated job
     await job.save();
+
+    // Create job log entry for successful completion
+    await JobLog.create({
+      jobId: job._id,
+      status: "completed",
+      message: "Job executed successfully",
+      duration: duration,
+      executedAt: new Date()
+    });
 
     // Create notification for successful job execution
     await Notification.create({
@@ -69,6 +90,9 @@ export const executeJobService = async (
     };
   } catch (error: any) {
     // Job execution failed
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    
     job.status = "failed";
     job.lastError = error.message;
     job.retryCount += 1;
@@ -80,6 +104,15 @@ export const executeJobService = async (
     }
 
     await job.save();
+
+    // Create job log entry for failed execution
+    await JobLog.create({
+      jobId: job._id,
+      status: "failed",
+      message: `Job execution failed: ${error.message}`,
+      duration: duration,
+      executedAt: new Date()
+    });
 
     // Create notification for failed job execution
     await Notification.create({
