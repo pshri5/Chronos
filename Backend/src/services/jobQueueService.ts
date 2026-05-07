@@ -1,5 +1,6 @@
 import { Job } from "../models/job.model.js";
 import { executeJobService } from "./jobExecutionService.js";
+import { JobLog } from "../models/jobLog.model.js";
 import mongoose from "mongoose";
 
 /**
