@@ -227,8 +227,8 @@ const JobFormModal: React.FC<{
           </div>
         </div>
         <div className="modal-backdrop fade show"></div>
+      </div>
       </>
-    </>
   );
 };
 

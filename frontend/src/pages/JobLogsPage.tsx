@@ -11,7 +11,6 @@ const JobLogsPage: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isJobSpecific, setIsJobSpecific] = useState(!!id);
 
   // Fetch logs when the component mounts or when id changes
   useEffect(() => {
@@ -27,48 +26,13 @@ const JobLogsPage: React.FC = () => {
           // Fetch recent logs for the current user
           response = await getRecentJobLogs();
         }
-        setLogs(response.jobLogs || response.data || []); // Adjust based on actual response structure
+        setLogs(response.jobLogs || response.data || []); 
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load job logs');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchLogs();
-  }, [id]);
-
-  return (
-    <div className="job-logs-page">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-          {id ? 'Job Execution Logs' : 'Recent Job Logs'}
-        </h2>
-        <div>
-          <a href={id ? `/jobs/${id}` : '/jobs'} className="btn btn-outline-secondary">
-            Back to Jobs
-          </a>
-        </div>
-      </div>
-
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <div className="alert alert-danger">{error}</div>
-      ) : logs.length === 0 ? (
-        <div className="text-center py-5">
-          <p>{id ? 'No logs found for this job.' : 'No recent job logs found.'}</p>
-        </div>
-      ) : (
-        <div className="list-group">
-          {logs.map((log: any) => (
-            <JobLogEntry key={log._id} log={log} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
 
     fetchLogs();
   }, [id]);
