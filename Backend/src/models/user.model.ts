@@ -20,6 +20,6 @@ const userSchema: Schema = new Schema({
     }
 },{timestamps:true})
 
-userSchema.index({ email: 1 });
+
 
 export const User = mongoose.model("User",userSchema)
