@@ -3,9 +3,8 @@ import { executeJobService } from "./jobExecutionService.js";
 import { JobLog } from "../models/jobLog.model.js";
 import mongoose from "mongoose";
 
-/**
- * Job Queue Service - Background worker for processing pending jobs
- */
+//Job Queue Service - Background worker for processing pending jobs
+ 
 export class JobQueueService {
   private static instance: JobQueueService;
   private isRunning: boolean = false;
@@ -14,9 +13,8 @@ export class JobQueueService {
 
   private constructor() {}
 
-  /**
-   * Get singleton instance
-   */
+  //Get singleton instance
+
   public static getInstance(): JobQueueService {
     if (!JobQueueService.instance) {
       JobQueueService.instance = new JobQueueService();
