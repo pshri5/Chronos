@@ -4,6 +4,7 @@ import jobRoutes from "./routes/job.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import jobLogRoutes from "./routes/jobLog.routes.js";
+import healthRoutes from "./routes/health.routes.js";
 import { jobQueueService } from "./services/jobQueueService.js";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -23,15 +24,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/job-logs", jobLogRoutes);
-
-// Health check route
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Server is healthy",
-    timestamp: new Date().toISOString()
-  });
-});
+app.use("/health", healthRoutes);
 
 // 404 handler
 app.all("*", (req, res) => {
