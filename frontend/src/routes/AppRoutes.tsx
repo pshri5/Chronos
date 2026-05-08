@@ -4,17 +4,18 @@ import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { JobListPage } from '../pages/JobListPage';
 import { JobDetailPage } from '../pages/JobDetailPage';
-import { NotificationsPage } from '../pages/NotificationsPage';
-import { JobLogsPage } from '../pages/JobLogsPage';
-
-// Helper component to wrap routes that require authentication
-const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  // In a real app, we would check the auth context here
-  // For now, we'll just return the children (we'll implement auth context later)
-  return children;
-};
+import { NotificationsPage } from '../pages/NotificationsPage>;
+import { JobLogsPage } from '../pages/JobLogsPage>;
+import { useAuth } from '../contexts/AuthContext';
 
 const AppRoutes = () => {
+  const { token, loading } = useAuth();
+
+  // If still loading, show a loading indicator or just return null (or a spinner)
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Layout>
       <Routes>
@@ -24,11 +25,36 @@ const AppRoutes = () => {
         <Route path="/register" element={<RegisterPage />} />
 
         {/* Protected routes - require authentication */}
-        <Route path="/jobs" element={<RequireAuth><JobListPage /></RequireAuth>} />
-        <Route path="/jobs/create" element={<RequireAuth><JobDetailPage /></RequireAuth>} />
-        <Route path="/jobs/:id" element={<RequireAuth><JobDetailPage /></RequireAuth>} />
-        <Route path="/notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
-        <Route path="/job-logs" element={<RequireAuth><JobLogsPage /></RequireAuth>} />
+        <Route
+          path="/jobs"
+          element={
+            token ? <JobListPage /> : <Navigate to="/login" replace state={{ from: '/jobs' }} />
+          }
+        />
+        <Route
+          path="/jobs/create"
+          element={
+            token ? <JobDetailPage /> : <Navigate to="/login" replace state={{ from: '/jobs/create' }} />
+          }
+        />
+        <Route
+          path="/jobs/:id"
+          element={
+            token ? <JobDetailPage /> : <Navigate to="/login" replace state={{ from: `/jobs/:id` }} />
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            token ? <NotificationsPage /> : <Navigate to="/login" replace state={{ from: '/notifications' }} />
+          }
+        />
+        <Route
+          path="/job-logs"
+          element={
+            token ? <JobLogsPage /> : <Navigate to="/login" replace state={{ from: '/job-logs' }} />
+          }
+        />
 
         {/* Redirect unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />

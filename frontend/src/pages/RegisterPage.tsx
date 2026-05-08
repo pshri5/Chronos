@@ -2,33 +2,47 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const result = await login(email, password);
+    const result = await register(name, email, password);
     setLoading(false);
     if (result.success) {
-      // Redirect to the intended page or home
-      navigate('/jobs', { replace: true });
+      // Redirect to login page after successful registration
+      navigate('/login', { replace: true });
     } else {
-      setError(result.error || 'Login failed');
+      setError(result.error || 'Registration failed');
     }
   };
 
   return (
     <div className="auth-page">
-      <h2>Login</h2>
+      <h2>Register</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">
+            Name
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
             Email
@@ -56,14 +70,14 @@ const LoginPage: React.FC = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? 'Registering...' : 'Register'}
         </button>
       </form>
       <p>
-        Don't have an account? <a href="/register">Register here</a>
+        Already have an account? <a href="/login">Login here</a>
       </p>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
