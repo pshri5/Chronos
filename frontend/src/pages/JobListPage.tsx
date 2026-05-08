@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { getJobs, createJob } from '../services/jobService';
+import { getJobs, createJob, deleteJob, executeJob } from '../services/jobService';
 import { JobCard } from '../components/JobCard';
 import { JobFormModal } from '../components/JobFormModal';
 
@@ -50,12 +50,9 @@ const JobListPage: React.FC = () => {
     try {
       await createJob(jobData);
       setShowCreateModal(false);
-      // Reset to first page after creation to show the new job
       setFilters(prev => ({ ...prev, page: 1 }));
     } catch (err: any) {
-      // Handle error (e.g., show validation errors)
-      console.error('Failed to create job:', err);
-      // In a real app, we would set form errors
+      setError(err.message || 'Failed to create job');
     }
   };
 
@@ -63,11 +60,9 @@ const JobListPage: React.FC = () => {
     if (window.confirm('Are you sure you want to delete this job?')) {
       try {
         await deleteJob(id);
-        // Refetch the current page
         setFilters(prev => ({ ...prev }));
       } catch (err: any) {
-        console.error('Failed to delete job:', err);
-        // Show error to user
+        setError(err.message || 'Failed to delete job');
       }
     }
   };
@@ -75,11 +70,9 @@ const JobListPage: React.FC = () => {
   const handleExecuteJob = async (id: string) => {
     try {
       await executeJob(id);
-      // Refetch the current page to see updated status
       setFilters(prev => ({ ...prev }));
     } catch (err: any) {
-      console.error('Failed to execute job:', err);
-      // Show error to user
+      setError(err.message || 'Failed to execute job');
     }
   };
 

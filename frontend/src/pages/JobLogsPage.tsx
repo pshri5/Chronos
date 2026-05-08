@@ -6,23 +6,23 @@ import { JobLogEntry } from '../components/JobLogEntry';
 import { Spinner } from '../components/Spinner';
 
 const JobLogsPage: React.FC = () => {
-  const { jobId } = useParams<{ jobId: string }>();
+  const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isJobSpecific, setIsJobSpecific] = useState(!!jobId);
+  const [isJobSpecific, setIsJobSpecific] = useState(!!id);
 
-  // Fetch logs when the component mounts or when jobId changes
+  // Fetch logs when the component mounts or when id changes
   useEffect(() => {
     const fetchLogs = async () => {
       setLoading(true);
       setError(null);
       try {
         let response;
-        if (jobId) {
+        if (id) {
           // Fetch logs for a specific job
-          response = await getJobLogs(jobId);
+          response = await getJobLogs(id);
         } else {
           // Fetch recent logs for the current user
           response = await getRecentJobLogs();
@@ -36,16 +36,16 @@ const JobLogsPage: React.FC = () => {
     };
 
     fetchLogs();
-  }, [jobId]);
+  }, [id]);
 
   return (
     <div className="job-logs-page">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>
-          {jobId ? 'Job Execution Logs' : 'Recent Job Logs'}
+          {id ? 'Job Execution Logs' : 'Recent Job Logs'}
         </h2>
         <div>
-          <a href={jobId ? `/jobs/${jobId}` : '/jobs'} className="btn btn-outline-secondary">
+          <a href={id ? `/jobs/${id}` : '/jobs'} className="btn btn-outline-secondary">
             Back to Jobs
           </a>
         </div>
@@ -57,7 +57,42 @@ const JobLogsPage: React.FC = () => {
         <div className="alert alert-danger">{error}</div>
       ) : logs.length === 0 ? (
         <div className="text-center py-5">
-          <p>{jobId ? 'No logs found for this job.' : 'No recent job logs found.'}</p>
+          <p>{id ? 'No logs found for this job.' : 'No recent job logs found.'}</p>
+        </div>
+      ) : (
+        <div className="list-group">
+          {logs.map((log: any) => (
+            <JobLogEntry key={log._id} log={log} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+    fetchLogs();
+  }, [id]);
+
+  return (
+    <div className="job-logs-page">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+          {id ? 'Job Execution Logs' : 'Recent Job Logs'}
+        </h2>
+        <div>
+          <a href={id ? `/jobs/${id}` : '/jobs'} className="btn btn-outline-secondary">
+            Back to Jobs
+          </a>
+        </div>
+      </div>
+
+      {loading ? (
+        <Spinner />
+      ) : error ? (
+        <div className="alert alert-danger">{error}</div>
+      ) : logs.length === 0 ? (
+        <div className="text-center py-5">
+          <p>{id ? 'No logs found for this job.' : 'No recent job logs found.'}</p>
         </div>
       ) : (
         <div className="list-group">

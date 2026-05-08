@@ -46,7 +46,7 @@ const AppRoutes = () => {
         <Route
           path="/jobs/:id/logs"
           element={
-            token ? <JobLogsPage jobId={id} /> : <Navigate to="/login" replace state={{ from: `/jobs/:id/logs` }} />
+            token ? <JobLogsPage /> : <Navigate to="/login" replace state={{ from: `/jobs/:id/logs` }} />
           }
         />
         <Route

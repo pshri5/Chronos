@@ -47,14 +47,11 @@ const JobDetailPage: React.FC = () => {
     try {
       await updateJob(id, jobData);
       setShowEditModal(false);
-      // Refetch the job to show updated data
       setLoading(true);
       const response = await getJob(id);
       setJob(response.data || response.job || response);
     } catch (err: any) {
-      // Handle error (e.g., show validation errors)
-      console.error('Failed to update job:', err);
-      // In a real app, we would set form errors
+      setError(err.message || 'Failed to update job');
     }
   };
 
@@ -63,8 +60,7 @@ const JobDetailPage: React.FC = () => {
       await deleteJob(id);
       navigate('/jobs');
     } catch (err: any) {
-      console.error('Failed to delete job:', err);
-      // Show error to user
+      setError(err.message || 'Failed to delete job');
     } finally {
       setShowDeleteConfirm(false);
     }
@@ -73,13 +69,11 @@ const JobDetailPage: React.FC = () => {
   const handleExecuteJob = async () => {
     try {
       await executeJob(id);
-      // Refetch the job to see updated status
       setLoading(true);
       const response = await getJob(id);
       setJob(response.data || response.job || response);
     } catch (err: any) {
-      console.error('Failed to execute job:', err);
-      // Show error to user
+      setError(err.message || 'Failed to execute job');
     } finally {
       setLoading(false);
     }
@@ -88,13 +82,11 @@ const JobDetailPage: React.FC = () => {
   const handleCancelJob = async () => {
     try {
       await cancelJob(id);
-      // Refetch the job to see updated status
       setLoading(true);
       const response = await getJob(id);
       setJob(response.data || response.job || response);
     } catch (err: any) {
-      console.error('Failed to cancel job:', err);
-      // Show error to user
+      setError(err.message || 'Failed to cancel job');
     } finally {
       setLoading(false);
     }
