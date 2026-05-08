@@ -4,8 +4,8 @@ import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { JobListPage } from '../pages/JobListPage';
 import { JobDetailPage } from '../pages/JobDetailPage';
-import { NotificationsPage } from '../pages/NotificationsPage>;
-import { JobLogsPage } from '../pages/JobLogsPage>;
+import { NotificationsPage } from '../pages/NotificationsPage';
+import { JobLogsPage } from '../pages/JobLogsPage';
 import { useAuth } from '../contexts/AuthContext';
 
 const AppRoutes = () => {
@@ -41,6 +41,12 @@ const AppRoutes = () => {
           path="/jobs/:id"
           element={
             token ? <JobDetailPage /> : <Navigate to="/login" replace state={{ from: `/jobs/:id` }} />
+          }
+        />
+        <Route
+          path="/jobs/:id/logs"
+          element={
+            token ? <JobLogsPage jobId={id} /> : <Navigate to="/login" replace state={{ from: `/jobs/:id/logs` }} />
           }
         />
         <Route
