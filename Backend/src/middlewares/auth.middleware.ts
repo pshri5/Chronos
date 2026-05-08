@@ -18,10 +18,17 @@ export const verifyJWT = async (req: Request, res: Response, next: NextFunction)
       return res.status(401).json({ success: false, message: "Access denied. No token provided." });
     }
 
-    const decoded = verify(token, process.env.ACCESS_TOKEN_SECRET as string);
-    // @ts-ignore
-    req.user = decoded;
+    const decoded = verify(token, process.env.ACCESS_TOKEN_SECRET as string) as any;
+    
+    // Find the user in DB to ensure the user exists and we have the full User document (with _id)
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ success: false, message: "User not found." });
+    }
+    
+    req.user = user;
     next();
+
   } catch (error) {
     return res.status(400).json({ success: false, message: "Invalid token." });
   }
