@@ -12,6 +12,8 @@ export interface Notification {
   updatedAt: string;
 }
 
+const unwrap = (response: any) => response.data?.data ?? response.data;
+
 // Fetch notifications with optional filters and pagination
 export const getNotifications = async (params?: {
   type?: string;
@@ -22,19 +24,19 @@ export const getNotifications = async (params?: {
   sortOrder?: string;
 }) => {
   const response = await api.get('/notifications', { params });
-  return response.data;
+  return unwrap(response);
 };
 
 // Mark a notification as read
 export const markNotificationAsRead = async (id: string) => {
   const response = await api.patch(`/notifications/${id}/read`);
-  return response.data;
+  return unwrap(response);
 };
 
 // Mark all notifications as read
 export const markAllNotificationsAsRead = async () => {
   const response = await api.patch('/notifications/read-all');
-  return response.data;
+  return unwrap(response);
 };
 
 // Delete a notification
@@ -45,5 +47,5 @@ export const deleteNotification = async (id: string) => {
 // Get unread count (optional, for badge)
 export const getUnreadCount = async () => {
   const response = await api.get('/notifications/unread-count');
-  return response.data;
+  return unwrap(response);
 };

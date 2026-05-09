@@ -27,8 +27,14 @@ Fix and make backend code connect and work with the frontend. Browser console sh
 - `POST /api/v1/users/login` → 200 with `accessToken`.
 - Browser login flow: form submit → redirect to `/jobs` → JWT stored in `localStorage`.
 
+## Tasks Completed (2026-05-09 – follow-up)
+- Fixed protected pages rendering blank: `jobs.map / notifications.some / logs.map is not a function`.
+- Root cause: services returned the full `apiResponse` envelope (`{ statusCode, data: { jobs|notifications|jobLogs, pagination }, message, success }`); pages expected the inner data object directly.
+- Updated `jobService.ts`, `notificationService.ts`, `jobLogService.ts` to unwrap the envelope (`response.data?.data ?? response.data`).
+- Verified: `/jobs`, `/notifications`, `/job-logs` all render proper empty-states; create-job + list-jobs round-trip works end-to-end.
+
 ## Backlog / Next Items
-- P1: Verify and polish `/jobs`, `/notifications`, `/job-logs` pages (blank screens may exist).
 - P1: Add a real `JWT_SECRET` rotation strategy for production.
 - P2: Replace `CORS_ORIGIN=*` with the exact preview/production URL.
 - P2: Surface backend error messages in frontend toasts.
+- P2: Pagination state is read from `response.pagination`; pages currently ignore it — wire up total/pages for proper pagination UX.

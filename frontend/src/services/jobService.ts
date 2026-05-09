@@ -16,6 +16,9 @@ export interface Job {
   updatedAt: string;
 }
 
+// Unwrap apiResponse envelope: { statusCode, data, message, success } -> data
+const unwrap = (response: any) => response.data?.data ?? response.data;
+
 // Fetch jobs with optional filters and pagination
 export const getJobs = async (params?: {
   status?: string;
@@ -26,25 +29,25 @@ export const getJobs = async (params?: {
   sortOrder?: string;
 }) => {
   const response = await api.get('/jobs', { params });
-  return response.data;
+  return unwrap(response);
 };
 
 // Get a single job by ID
 export const getJob = async (id: string) => {
   const response = await api.get(`/jobs/${id}`);
-  return response.data;
+  return unwrap(response);
 };
 
 // Create a new job
 export const createJob = async (jobData: Omit<Job, '_id' | 'createdAt' | 'updatedAt'>) => {
   const response = await api.post('/jobs', jobData);
-  return response.data;
+  return unwrap(response);
 };
 
 // Update an existing job
 export const updateJob = async (id: string, jobData: Partial<Job>) => {
   const response = await api.patch(`/jobs/${id}`, jobData);
-  return response.data;
+  return unwrap(response);
 };
 
 // Delete a job
@@ -55,11 +58,11 @@ export const deleteJob = async (id: string) => {
 // Execute a job (manual execution)
 export const executeJob = async (id: string) => {
   const response = await api.post(`/jobs/${id}/execute`);
-  return response.data;
+  return unwrap(response);
 };
 
 // Cancel a job
 export const cancelJob = async (id: string) => {
   const response = await api.post(`/jobs/${id}/cancel`);
-  return response.data;
+  return unwrap(response);
 };
