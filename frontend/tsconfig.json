@@ -13,6 +13,9 @@
     "moduleDetection": "force",
     "noEmit": true,
 
+    /* JSX */
+    "jsx": "preserve",
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,

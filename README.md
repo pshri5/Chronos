@@ -3,7 +3,7 @@ A job scheduler — Express + TypeScript backend, React + Vite frontend, MongoDB
 
 ---
 
-## Run with Docker (recommended for demo / submission)
+## Run with Docker 
 
 Everything (Mongo + backend + frontend + nginx reverse-proxy) is wrapped in a single Compose stack. One command, one URL.
 
