@@ -38,7 +38,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/login', { email, password });
-      const { accessToken, user: userData } = response.data;
+      const { accessToken, user: userData } = response.data?.data ?? response.data;
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       setUser(userData);
@@ -52,7 +52,18 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/register', { name, email, password });
-      const { accessToken, user: userData } = response.data;
+      // Register only returns user; auto-login to get tokens
+      const registeredUser = response.data?.data ?? response.data;
+      if (!registeredUser?.accessToken) {
+        const loginResp = await api.post('/users/login', { email, password });
+        const { accessToken: at, user: u } = loginResp.data?.data ?? loginResp.data;
+        localStorage.setItem('token', at);
+        setToken(at);
+        setUser(u);
+        api.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+        return { success: true };
+      }
+      const { accessToken, user: userData } = registeredUser;
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       setUser(userData);

@@ -1,7 +1,9 @@
 import axios, { AxiosError } from 'axios';
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || `${import.meta.env.REACT_APP_BACKEND_URL || ''}/api/v1`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+  baseURL: BACKEND_URL,
 });
 
 api.interceptors.request.use((config) => {

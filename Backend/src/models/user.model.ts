@@ -23,17 +23,12 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
 }, { timestamps: true });
 
 // Hashing password before saving
-userSchema.pre("save", async function (this: any, next: any) {
-    try {
-        if (!this.isModified("password")) return next(); // preventing rehashing of the password
+userSchema.pre("save", async function (this: any) {
+    if (!this.isModified("password")) return; // preventing rehashing of the password
 
-        // Ensure password exists before hashing
-        if (this.password) {
-            this.password = await bcrypt.hash(this.password, 10);
-        }
-        next();
-    } catch (error) {
-        next(error as mongoose.CallbackError);
+    // Ensure password exists before hashing
+    if (this.password) {
+        this.password = await bcrypt.hash(this.password, 10);
     }
 });
 

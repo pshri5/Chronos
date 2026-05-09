@@ -59,13 +59,13 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   }
 
   // Hash password
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // Password is hashed automatically by the User model's pre-save hook
 
   // Create user
   const user = await User.create({
     name,
     email,
-    password: hashedPassword
+    password
   });
 
   const createdUser = await User.findById(user._id).select("-password -refreshToken");
