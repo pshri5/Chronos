@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getJobs, createJob, deleteJob, executeJob } from '../services/jobService';
 import { JobCard } from '../components/JobCard';
 import { JobFormModal } from '../components/JobFormModal';
@@ -18,7 +17,6 @@ export const JobListPage: React.FC = () => {
     sortBy: 'scheduledAt',
     sortOrder: 'asc',
   });
-  const navigate = useNavigate();
 
   const fetchJobs = async () => {
     setLoading(true);
