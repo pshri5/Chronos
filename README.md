@@ -36,7 +36,7 @@ graph TD
     JobEngine -.-> Alerts[(Notifications)]
 ```
 
-## 🧠 Design Decisions
+##  Design Decisions
 
 - **TypeScript Everywhere**: Used across both the backend and frontend to ensure strict type safety, reducing runtime errors and improving developer productivity.
 - **Mongoose for Modeling**: Chosen for its robust schema validation and middleware support, which is critical for maintaining data integrity in the job queue.
@@ -113,7 +113,7 @@ docker-compose up -d --build
 #### `POST /api/v1/jobs/:id/execute` (Protected)
 *   Manually triggers an immediate execution of a specific job.
 
-## 🧪 Testing
+##  Testing
 
 The system includes unit and integration tests covering core business logic.
 
