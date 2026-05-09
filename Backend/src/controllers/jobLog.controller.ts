@@ -71,8 +71,11 @@ export const getRecentJobLogs = asyncHandler(async (req: Request, res: Response)
     sortOrder = "desc"
   } = req.query;
 
-  // Find all job IDs belonging to the current user
-  const userJobs = await Job.find({ userId: req.user?._id }).select("_id");
+  // Find all job IDs belonging to the current user.
+  // Cap to a sensible upper bound to keep the IN-clause bounded under load.
+  const userJobs = await Job.find({ userId: req.user?._id })
+    .select("_id")
+    .limit(1000);
   const userJobIds = userJobs.map(job => job._id);
 
   if (userJobIds.length === 0) {
