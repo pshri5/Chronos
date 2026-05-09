@@ -1,33 +1,33 @@
 import mongoose, { Schema } from "mongoose";
 import { Job } from "./job.model.js";
+import { IJobLog } from "../types/jobLog.types.js";
 
-const jobLogSchema = new Schema({
-    jobId:{
+const jobLogSchema: Schema<IJobLog> = new Schema<IJobLog>({
+    jobId: {
         type: Schema.Types.ObjectId,
         ref: Job,
         required: true,
         index: true
     },
-    status:{
+    status: {
         type: String,
         required: true,
-        enum:["started", "completed","failed","retrying"],
-    
+        enum: ["started", "completed", "failed", "retrying"],
     },
-    message:{
+    message: {
         type: String,
         required: true
     },
-    duration:{
+    duration: {
         type: Number,
         default: null
     },
-    executedAt:{
+    executedAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now // Fix: Pass function, not result
     }
-},{timestamps:true})
+}, { timestamps: true });
 
-jobLogSchema.index({jobId:1,executedAt:-1})
+jobLogSchema.index({ jobId: 1, executedAt: -1 });
 
-export const JobLog = mongoose.model("JobLog",jobLogSchema)
+export const JobLog = mongoose.model<IJobLog>("JobLog", jobLogSchema);

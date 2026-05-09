@@ -56,7 +56,7 @@ export const markNotificationAsRead = asyncHandler(async (req: Request, res: Res
   const { notificationId } = req.params;
 
   // Validate notificationId
-  if (!mongoose.Types.ObjectId.isValid(notificationId)) {
+  if (!mongoose.Types.ObjectId.isValid(notificationId as string)) {
     return res.status(400).json(new apiResponse(400, null, "Invalid notification ID"));
   }
 
@@ -96,7 +96,7 @@ export const deleteNotification = asyncHandler(async (req: Request, res: Respons
   const { notificationId } = req.params;
 
   // Validate notificationId
-  if (!mongoose.Types.ObjectId.isValid(notificationId)) {
+  if (!mongoose.Types.ObjectId.isValid(notificationId as string)) {
     return res.status(400).json(new apiResponse(400, null, "Invalid notification ID"));
   }
 

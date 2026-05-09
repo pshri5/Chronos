@@ -16,7 +16,7 @@ export const getJobLogs = asyncHandler(async (req: Request, res: Response) => {
   } = req.query;
 
   // Validate jobId
-  if (!mongoose.Types.ObjectId.isValid(jobId)) {
+  if (!mongoose.Types.ObjectId.isValid(jobId as string)) {
     return res.status(400).json(new apiResponse(400, null, "Invalid job ID"));
   }
 

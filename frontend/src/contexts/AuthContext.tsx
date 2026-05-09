@@ -1,9 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { api } from '../services/api';
+import api from '../services/api';
 
-export const AuthContext = createContext(null);
+interface AuthContextValue {
+  user: any;
+  token: string | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => void;
+}
 
-export const useAuth = () => {
+export const AuthContext = createContext<AuthContextValue | null>(null);
+
+export const useAuth = (): AuthContextValue => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthContextProvider');
@@ -21,33 +30,26 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
       setToken(storedToken);
-      // Set token in axios headers
       api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-      // Fetch user profile (optional, if we have an endpoint for it)
-      // For now, we just set the token and consider the user authenticated
-      setLoading(false);
-    } else {
-      setLoading(false);
     }
+    setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/login', { email, password });
       const { accessToken, user: userData } = response.data;
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       setUser(userData);
-      // Set token in axios headers for future requests
       api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       return { success: true };
     } catch (error: any) {
-      // Handle error (e.g., invalid credentials)
-      return { success: false, error: error.response?.data?.message || 'Login failed' };
+      return { success: false, error: error.message || 'Login failed' };
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/register', { name, email, password });
       const { accessToken, user: userData } = response.data;
@@ -57,7 +59,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
       api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       return { success: true };
     } catch (error: any) {
-      return { success: false, error: error.response?.data?.message || 'Registration failed' };
+      return { success: false, error: error.message || 'Registration failed' };
     }
   };
 
@@ -65,11 +67,10 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    // Remove token from axios headers
     delete api.defaults.headers.common['Authorization'];
   };
 
-  const value = {
+  const value: AuthContextValue = {
     user,
     token,
     login,
@@ -80,7 +81,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

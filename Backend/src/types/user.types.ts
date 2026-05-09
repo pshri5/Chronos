@@ -4,10 +4,11 @@ export interface IUser {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  password?: string; // Exclude from responses by default
+  password: string; 
   refreshToken?: string;
   createdAt: Date;
   updatedAt: Date;
+  isPasswordCorrect(password: string): Promise<boolean>;
 }
 
 export interface IUserRequest extends Request {

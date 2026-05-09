@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const LoginPage: React.FC = () => {
+export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -17,51 +17,107 @@ const LoginPage: React.FC = () => {
     const result = await login(email, password);
     setLoading(false);
     if (result.success) {
-      // Redirect to the intended page or home
       navigate('/jobs', { replace: true });
     } else {
-      setError(result.error || 'Login failed');
+      setError(result.error || 'Invalid credentials. Please try again.');
     }
   };
 
   return (
-    <div className="auth-page">
-      <h2>Login</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+    <div className="min-h-[85vh] flex items-center justify-center p-4 animate-fade-in">
+      <div className="w-full max-w-lg relative">
+        {/* Decorative elements */}
+        <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary-600/20 rounded-full blur-3xl animate-pulse-slow" />
+        <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-primary-400/10 rounded-full blur-3xl animate-pulse-slow" />
+
+        <div className="glass-card rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden">
+           {/* Top bar accent */}
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-primary-500 to-transparent" />
+
+          {/* Logo & Intro */}
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-primary-500/40 animate-float">
+              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight mb-2">Welcome Back</h1>
+            <p className="text-slate-400 font-medium">Access your automated scheduling suite</p>
+          </div>
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-2xl text-sm font-medium mb-8 flex items-center gap-3 animate-slide-up">
+               <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="login-email" className="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="login-email"
+                className="input-field"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@company.com"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <label htmlFor="login-password" className="block text-xs font-black text-slate-500 uppercase tracking-[0.2em]">
+                  Password
+                </label>
+                <a href="#" className="text-[10px] font-bold text-primary-400 hover:text-primary-300 uppercase tracking-wider transition-colors">
+                  Forgot?
+                </a>
+              </div>
+              <input
+                type="password"
+                id="login-password"
+                className="input-field"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="login-submit"
+              disabled={loading}
+              className="btn-primary w-full h-14 text-lg mt-4 group"
+            >
+              {loading ? (
+                 <div className="flex items-center justify-center gap-3">
+                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    Signing in...
+                 </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2">
+                    Sign In
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </div>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-10 pt-10 border-t border-white/5 text-center">
+            <p className="text-slate-500 font-medium text-sm">
+              New to Chronos?{' '}
+              <Link to="/register" className="text-primary-400 hover:text-primary-300 font-bold ml-1 transition-colors underline decoration-primary-500/30 underline-offset-4">
+                Create an account
+              </Link>
+            </p>
+          </div>
         </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      <p>
-        Don't have an account? <a href="/register">Register here</a>
-      </p>
+      </div>
     </div>
   );
 };

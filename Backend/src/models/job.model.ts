@@ -1,8 +1,9 @@
 import mongoose, {Schema} from "mongoose";
 import { User } from "./user.model.js";
+import { IJob } from "../types/job.types.js";
 
 
-const jobSchema: Schema = new Schema({
+const jobSchema: Schema<IJob> = new Schema<IJob>({
     userId:{
         type: Schema.Types.ObjectId,
         ref: User,
@@ -57,4 +58,4 @@ const jobSchema: Schema = new Schema({
 
 jobSchema.index({status: 1 , scheduledAt: 1 })
 
-export const Job = mongoose.model("Job",jobSchema)
+export const Job = mongoose.model<IJob>("Job",jobSchema)

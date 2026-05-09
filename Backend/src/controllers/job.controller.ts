@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { Notification } from "../models/notification.model.js";
 import mongoose from "mongoose";
+import { executeJobService, cancelJobService } from "../services/jobExecutionService.js";
 
 // Create a new job
 export const createJob = asyncHandler(async (req: Request, res: Response) => {
@@ -112,7 +113,7 @@ export const getJobById = asyncHandler(async (req: Request, res: Response) => {
   const { jobId } = req.params;
 
   // Validate jobId
-  if (!mongoose.Types.ObjectId.isValid(jobId)) {
+  if (!mongoose.Types.ObjectId.isValid(jobId as string)) {
     return res.status(400).json(new apiResponse(400, null, "Invalid job ID"));
   }
 
@@ -136,7 +137,7 @@ export const updateJob = asyncHandler(async (req: Request, res: Response) => {
   const updates = req.body;
 
   // Validate jobId
-  if (!mongoose.Types.ObjectId.isValid(jobId)) {
+  if (!mongoose.Types.ObjectId.isValid(jobId as string)) {
     return res.status(400).json(new apiResponse(400, null, "Invalid job ID"));
   }
 
@@ -172,12 +173,15 @@ export const updateJob = asyncHandler(async (req: Request, res: Response) => {
     updates.cronExpression = null;
   }
 
-  // Update job
   const updatedJob = await Job.findByIdAndUpdate(
     jobId,
     { ...updates, updatedAt: new Date() },
     { new: true, runValidators: true }
   ).populate("userId", "name email");
+
+  if (!updatedJob) {
+    return res.status(500).json(new apiResponse(500, null, "Failed to update job"));
+  }
 
   // Create notification for job update
   await Notification.create({
@@ -198,7 +202,7 @@ export const deleteJob = asyncHandler(async (req: Request, res: Response) => {
   const { jobId } = req.params;
 
   // Validate jobId
-  if (!mongoose.Types.ObjectId.isValid(jobId)) {
+  if (!mongoose.Types.ObjectId.isValid(jobId as string)) {
     return res.status(400).json(new apiResponse(400, null, "Invalid job ID"));
   }
 
@@ -232,7 +236,7 @@ export const executeJob = asyncHandler(async (req: Request, res: Response) => {
 
   try {
     const result = await executeJobService(
-      jobId,
+      jobId as string,
       new mongoose.Types.ObjectId(req.user?._id)
     );
     
@@ -252,7 +256,7 @@ export const cancelJob = asyncHandler(async (req: Request, res: Response) => {
 
   try {
     const result = await cancelJobService(
-      jobId,
+      jobId as string,
       new mongoose.Types.ObjectId(req.user?._id)
     );
     

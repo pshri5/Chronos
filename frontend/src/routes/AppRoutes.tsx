@@ -7,63 +7,53 @@ import { JobDetailPage } from '../pages/JobDetailPage';
 import { NotificationsPage } from '../pages/NotificationsPage';
 import { JobLogsPage } from '../pages/JobLogsPage';
 import { useAuth } from '../contexts/AuthContext';
+import { Spinner } from '../components/Spinner';
 
 const AppRoutes = () => {
   const { token, loading } = useAuth();
 
-  // If still loading, show a loading indicator or just return null (or a spinner)
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
     <Layout>
       <Routes>
-        {/* Public routes */}
-        <Navigate path="/" to="/jobs" replace />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/* Redirect root based on auth */}
+        <Route path="/" element={<Navigate to={token ? '/jobs' : '/login'} replace />} />
 
-        {/* Protected routes - require authentication */}
+        {/* Public routes */}
+        <Route path="/login" element={token ? <Navigate to="/jobs" replace /> : <LoginPage />} />
+        <Route path="/register" element={token ? <Navigate to="/jobs" replace /> : <RegisterPage />} />
+
+        {/* Protected routes */}
         <Route
           path="/jobs"
-          element={
-            token ? <JobListPage /> : <Navigate to="/login" replace state={{ from: '/jobs' }} />
-          }
-        />
-        <Route
-          path="/jobs/create"
-          element={
-            token ? <JobDetailPage /> : <Navigate to="/login" replace state={{ from: '/jobs/create' }} />
-          }
+          element={token ? <JobListPage /> : <Navigate to="/login" replace state={{ from: '/jobs' }} />}
         />
         <Route
           path="/jobs/:id"
-          element={
-            token ? <JobDetailPage /> : <Navigate to="/login" replace state={{ from: `/jobs/:id` }} />
-          }
+          element={token ? <JobDetailPage /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/jobs/:id/logs"
-          element={
-            token ? <JobLogsPage /> : <Navigate to="/login" replace state={{ from: `/jobs/:id/logs` }} />
-          }
+          element={token ? <JobLogsPage /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/notifications"
-          element={
-            token ? <NotificationsPage /> : <Navigate to="/login" replace state={{ from: '/notifications' }} />
-          }
+          element={token ? <NotificationsPage /> : <Navigate to="/login" replace state={{ from: '/notifications' }} />}
         />
         <Route
           path="/job-logs"
-          element={
-            token ? <JobLogsPage /> : <Navigate to="/login" replace state={{ from: '/job-logs' }} />
-          }
+          element={token ? <JobLogsPage /> : <Navigate to="/login" replace />}
         />
 
-        {/* Redirect unknown routes to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to={token ? '/jobs' : '/login'} replace />} />
       </Routes>
     </Layout>
   );

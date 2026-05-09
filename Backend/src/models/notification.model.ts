@@ -1,33 +1,35 @@
 import mongoose, { Schema } from "mongoose";
 import { User } from "./user.model.js";
 import { Job } from "./job.model.js";
+import { INotification } from "../types/notification.types.js";
 
-const notificationSchema = new Schema({
-    userId:{
+const notificationSchema: Schema<INotification> = new Schema<INotification>({
+    userId: {
         type: Schema.Types.ObjectId,
         ref: User,
         required: true,
         index: true
     },
-    jobId:{
+    jobId: {
         type: Schema.Types.ObjectId,
         ref: Job,
         required: true
     },
-    type:{
+    type: {
         type: String,
         required: true
     },
-    message:{
+    message: {
         type: String,
         required: true
     },
-    read:{
+    read: {
         type: Boolean,
         default: false
     }
-},{timestamps:{createdAt:true,updatedAt:false}})
+}, { timestamps: { createdAt: true, updatedAt: false } });
 
-notificationSchema.index({ user_id: 1, createdAt: -1, read: 1 });
+// Fix: index field name userId (was user_id)
+notificationSchema.index({ userId: 1, createdAt: -1, read: 1 });
 
-export const Notification = mongoose.model("Notification",notificationSchema)
+export const Notification = mongoose.model<INotification>("Notification", notificationSchema);

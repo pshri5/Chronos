@@ -1,44 +1,45 @@
-import type { NextFunction } from "express";
-import mongoose,{Schema, type CallbackWithoutResultAndOptionalError} from "mongoose";
-import bcrypt from "bcrypt"
+import mongoose, { Schema, type CallbackWithoutResultAndOptionalError } from "mongoose";
+import bcrypt from "bcrypt";
+import type { IUser } from "../types/user.types.js";
 
-
-
-const userSchema: Schema = new Schema({
-    name:{
+const userSchema: Schema<IUser> = new Schema<IUser>({
+    name: {
         type: String,
         required: true,
-        
     },
-    email:{
+    email: {
         type: String,
         required: true,
-        unique:true,
+        unique: true,
         lowercase: true
     },
-    password:{
+    password: {
         type: String,
         required: true
+    },
+    refreshToken: {
+        type: String
     }
-},{timestamps:true})
+}, { timestamps: true });
 
+// Hashing password before saving
+userSchema.pre("save", async function (this: any, next: any) {
+    try {
+        if (!this.isModified("password")) return next(); // preventing rehashing of the password
 
+        // Ensure password exists before hashing
+        if (this.password) {
+            this.password = await bcrypt.hash(this.password, 10);
+        }
+        next();
+    } catch (error) {
+        next(error as mongoose.CallbackError);
+    }
+});
 
-export const User = mongoose.model("User",userSchema)
+// comparing saved password and input password
+userSchema.methods.isPasswordCorrect = async function (inputPassword: string): Promise<boolean> {
+    return await bcrypt.compare(inputPassword, this.password);
+};
 
-//Hashing password before saving
-userSchema.pre("save",async function (next:CallbackWithoutResultAndOptionalError) {
-   try {
-     if(!this.isModified("password")) return next() //preventing rehashing of the password
-    
-    this.password = await bcrypt.hash(this.password, 10)
-    next()
-   } catch (error) {
-    next(error as mongoose.CallbackError)
-   }
-})
-
-//comparing saved password and input password
-userSchema.methods.isPasswordCorrect = async function(inputPassword){
-   return await bcrypt.compare(inputPassword, this.password)
-}
+export const User = mongoose.model<IUser>("User", userSchema);
