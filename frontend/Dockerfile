@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Install deps (cache-friendly)
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy source and build
 COPY . .
