@@ -84,7 +84,7 @@ export const JobLogsPage: React.FC = () => {
         <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-6 py-4 rounded-2xl">
           {error}
         </div>
-      ) : logs.length === 0 ? (
+      ) : !logs || logs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center mb-4">
             <svg className="w-8 h-8 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +98,7 @@ export const JobLogsPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {logs.map((log: any) => (
+          {logs?.map((log: any) => (
             <JobLogEntry key={log._id} log={log} />
           ))}
         </div>

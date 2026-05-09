@@ -83,7 +83,7 @@ export const NotificationsPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-white">Notifications</h1>
         </div>
         <div className="flex items-center gap-2">
-          {notifications.some(n => !n.read) && (
+          {notifications?.some((n: any) => !n.read) && (
             <button
               className="px-4 py-2 text-sm font-medium text-blue-400 hover:text-blue-300 bg-blue-500/10 border border-blue-500/30 hover:border-blue-400/50 rounded-lg transition-colors"
               onClick={() => setShowMarkAllModal(true)}
@@ -101,7 +101,7 @@ export const NotificationsPage: React.FC = () => {
         <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-6 py-4 rounded-2xl">
           {error}
         </div>
-      ) : notifications.length === 0 ? (
+      ) : !notifications || notifications.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center mb-4">
             <svg className="w-8 h-8 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,7 +113,7 @@ export const NotificationsPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-3">
-          {notifications.map((notification: any) => (
+          {notifications?.map((notification: any) => (
             <NotificationItem
               key={notification._id}
               notification={notification}

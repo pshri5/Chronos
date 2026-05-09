@@ -38,7 +38,11 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/login', { email, password });
+<<<<<<< Updated upstream
       const { accessToken, user: userData } = response.data?.data ?? response.data;
+=======
+      const { accessToken, user: userData } = response.data.data;
+>>>>>>> Stashed changes
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       setUser(userData);
@@ -52,6 +56,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/register', { name, email, password });
+<<<<<<< Updated upstream
       // Register only returns user; auto-login to get tokens
       const registeredUser = response.data?.data ?? response.data;
       if (!registeredUser?.accessToken) {
@@ -64,6 +69,9 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return { success: true };
       }
       const { accessToken, user: userData } = registeredUser;
+=======
+      const { accessToken, user: userData } = response.data.data;
+>>>>>>> Stashed changes
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       setUser(userData);

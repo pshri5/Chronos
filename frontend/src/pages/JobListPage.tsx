@@ -92,7 +92,7 @@ export const JobListPage: React.FC = () => {
           <h1 className="text-4xl font-black text-white tracking-tight mb-2">Job Dashboard</h1>
           <p className="text-slate-400 font-medium max-w-lg">
             Monitor and manage your automated workflows in real-time. 
-            <span className="text-primary-400 ml-1 font-bold">{jobs.length} active tasks</span> detected.
+            <span className="text-primary-400 ml-1 font-bold">{jobs?.length || 0} active tasks</span> detected.
           </p>
         </div>
         <button
@@ -169,7 +169,7 @@ export const JobListPage: React.FC = () => {
       {/* Grid Content */}
       {loading ? (
         <div className="py-20"><Spinner size="lg" /></div>
-      ) : jobs.length === 0 ? (
+      ) : !jobs || jobs.length === 0 ? (
         <div className="glass-card rounded-3xl p-20 flex flex-col items-center justify-center text-center animate-slide-up">
           <div className="w-24 h-24 bg-slate-950 rounded-3xl flex items-center justify-center mb-6 shadow-premium border border-white/5">
             <svg className="w-12 h-12 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,7 +189,7 @@ export const JobListPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-slide-up">
-          {jobs.map((job: any) => (
+          {jobs?.map((job: any) => (
             <JobCard
               key={job._id}
               job={job}
@@ -201,7 +201,7 @@ export const JobListPage: React.FC = () => {
       )}
 
       {/* Pagination */}
-      {!loading && jobs.length > 0 && (
+      {!loading && jobs && jobs.length > 0 && (
         <div className="flex items-center justify-center gap-4 py-8">
             <button
               className="w-12 h-12 flex items-center justify-center rounded-xl glass-card text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
@@ -216,7 +216,7 @@ export const JobListPage: React.FC = () => {
             <button
               className="w-12 h-12 flex items-center justify-center rounded-xl glass-card text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               onClick={() => setFilters(prev => ({ ...prev, page: prev.page + 1 }))}
-              disabled={jobs.length < filters.limit}
+              disabled={!jobs || jobs.length < filters.limit}
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
             </button>
