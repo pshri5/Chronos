@@ -1,66 +1,115 @@
-# Chronos
-A job scheduler — Express + TypeScript backend, React + Vite frontend, MongoDB.
+# Chronos - Job Management System
 
----
+Chronos is a full-stack job management platform designed to schedule, execute, and monitor background tasks. It provides a comprehensive system for managing one-time and recurring jobs with integrated logging and user notifications.
 
-## Run with Docker 
-
-Everything (Mongo + backend + frontend + nginx reverse-proxy) is wrapped in a single Compose stack. One command, one URL.
-
-### Prerequisites
-- Docker 24+ and Docker Compose v2 (bundled with Docker Desktop).
-
-### Start
-```bash
-cp .env.example .env          # edit JWT secrets if you want
-docker compose up -d --build
-```
-
-Open http://localhost — frontend is served by nginx, and any request to `/api/*` is reverse-proxied to the backend container, so there is **no CORS to configure** and **only one port** to expose.
-
-### Stop / clean up
-```bash
-docker compose down           # stop containers
-docker compose down -v        # also delete the Mongo volume
-```
-
-### Custom port
-```bash
-HOST_PORT=8080 docker compose up -d --build
-# now available on http://localhost:8080
-```
-
-### Service map
-| Service    | Image base       | Port (host) | Role                              |
-|------------|------------------|-------------|-----------------------------------|
-| `frontend` | `nginx:alpine`   | `80`        | Static SPA + reverse proxy `/api` |
-| `backend`  | `node:20-alpine` | (internal)  | Express API on `:8000`            |
-| `mongo`    | `mongo:7`        | (internal)  | Database (named volume)           |
-
-### Demo credentials
-After `docker compose up`, register a new user from the UI, or:
-```bash
-curl -X POST http://localhost/api/v1/users/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Demo","email":"demo@example.com","password":"Password123"}'
-```
-
----
-
-## Local development (without Docker)
+## 🚀 Project Overview
 
 ### Backend
-```bash
-cd Backend
-pnpm install
-cp .env.sample .env           # set MONGODB_URI, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET
-pnpm dev                      # tsx watch on http://localhost:8000
-```
+The backend is a Node.js/Express server built with TypeScript and MongoDB.
+- **Core Features**:
+  - **Job Scheduling**: Support for one-time and recurring (cron-based) jobs.
+  - **Execution Engine**: A dedicated queue service to handle job execution and retries.
+  - **Auth System**: JWT-based authentication and password hashing with bcrypt.
+  - **Notification System**: Real-time notifications for job lifecycle events.
+  - **Monitoring**: Detailed execution logs for every job run.
+  - **Health Check**: Integrated health monitoring endpoint.
 
 ### Frontend
+A modern React-based dashboard built with Vite, TypeScript, and Tailwind CSS.
+- **Features**:
+  - **Job Dashboard**: List, filter, and manage all scheduled jobs.
+  - **Job Lifecycle Management**: Create, edit, execute, and cancel jobs through a sleek UI.
+  - **Log Viewer**: Detailed execution logs for auditing and debugging.
+  - **Notification Center**: Track and manage system alerts.
+  - **Authentication**: Secure login and registration flow.
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | React 19, Vite, TypeScript, Tailwind CSS, Axios, React Router 7 |
+| **Backend** | Node.js, Express 5, TypeScript, Mongoose |
+| **Database** | MongoDB |
+| **Authentication** | JSON Web Tokens (JWT), bcrypt |
+| **Testing** | Vitest, Supertest (Integration & Unit tests) |
+| **Package Manager** | pnpm |
+
+## 🚦 Getting Started
+
+### Prerequisites
+- Node.js (v20+ recommended)
+- MongoDB (Local instance or Atlas)
+- pnpm (`npm install -g pnpm`)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd Chronos
+   ```
+
+2. **Backend Setup**
+   ```bash
+   cd Backend
+   pnpm install
+   cp .env.sample .env # Update MONGODB_URI, ACCESS_TOKEN_SECRET, etc.
+   pnpm run dev
+   ```
+
+3. **Frontend Setup**
+   ```bash
+   cd ../frontend
+   pnpm install
+   pnpm run dev
+   ```
+
+## 🧪 Testing
+
+The backend includes a comprehensive test suite using **Vitest**.
+
 ```bash
-cd frontend
-yarn install
-echo "VITE_API_URL=http://localhost:8000/api/v1" > .env
-yarn dev                      # http://localhost:3000
+cd Backend
+pnpm run test          # Run all tests
+pnpm run test:coverage # Run tests with coverage report
 ```
+
+## 📁 Project Structure
+
+```text
+Chronos/
+├── Backend/
+│   ├── src/
+│   │   ├── controllers/   # Route handlers
+│   │   ├── models/        # Mongoose schemas
+│   │   ├── routes/        # API route definitions
+│   │   ├── services/      # Business logic & Job queue engine
+│   │   ├── middlewares/   # Auth & Error handling
+│   │   └── utils/         # API response & Async helpers
+│   └── tests/             # Unit and Integration tests
+└── frontend/
+    ├── src/
+    │   ├── components/    # Reusable UI components
+    │   ├── pages/         # Page views (Dashboard, Login, etc.)
+    │   ├── services/       # API integration layer
+    │   ├── contexts/      # Global state (AuthContext)
+    │   └── routes/        # App navigation logic
+    └── vitest.config.ts    # Frontend test configuration
+```
+
+## 📜 API Endpoints
+
+| Endpoint | Method | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `/health` | GET | Check server heartbeat | No |
+| `/api/v1/users/register` | POST | Create new account | No |
+| `/api/v1/users/login` | POST | Authenticate user | No |
+| `/api/v1/jobs` | GET | Fetch user's jobs | Yes |
+| `/api/v1/jobs` | POST | Create a new job | Yes |
+| `/api/v1/jobs/:id` | GET | Get job details | Yes |
+| `/api/v1/jobs/:id` | PATCH | Update job settings | Yes |
+| `/api/v1/jobs/:id` | DELETE | Remove a job | Yes |
+| `/api/v1/jobs/:id/execute`| POST | Manually trigger job | Yes |
+| `/api/v1/jobs/:id/cancel` | POST | Cancel a pending job | Yes |
+| `/api/v1/notifications` | GET | Get user notifications | Yes |
+| `/api/v1/job-logs` | GET | Get all recent logs | Yes |
