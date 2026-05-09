@@ -63,11 +63,10 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
     return res.status(400).json(new apiResponse(400, null, "Please provide a valid email address"));
   }
 
-  // Normalize email to lowercase trimmed for lookup/store
-  const normalizedEmail = email.trim().toLowerCase();
+
 
   // Check if user already exists
-  const existedUser = await User.findOne({ email: normalizedEmail });
+  const existedUser = await User.findOne({ email });
   if (existedUser) {
     return res.status(409).json(new apiResponse(409, null, "User already exists with this email"));
   }
