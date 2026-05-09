@@ -5,6 +5,14 @@ import { apiResponse } from "../utils/apiResponse.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// RFC-style pragmatic email regex (matches the frontend validator).
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const isValidEmail = (email: string): boolean =>
+  typeof email === "string" &&
+  email.trim().length > 0 &&
+  email.trim().length <= 254 &&
+  EMAIL_REGEX.test(email.trim());
+
 // Generate access and refresh tokens
 const generateAccessAndRefreshTokens = async (userId: string) => {
   try {
@@ -51,9 +59,15 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   if (!name || !email || !password) {
     return res.status(400).json(new apiResponse(400, null, "All fields are required"));
   }
+  if (!isValidEmail(email)) {
+    return res.status(400).json(new apiResponse(400, null, "Please provide a valid email address"));
+  }
+
+  // Normalize email to lowercase trimmed for lookup/store
+  const normalizedEmail = email.trim().toLowerCase();
 
   // Check if user already exists
-  const existedUser = await User.findOne({ email });
+  const existedUser = await User.findOne({ email: normalizedEmail });
   if (existedUser) {
     return res.status(409).json(new apiResponse(409, null, "User already exists with this email"));
   }
@@ -64,7 +78,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   // Create user
   const user = await User.create({
     name,
-    email,
+    email: normalizedEmail,
     password
   });
 
@@ -86,9 +100,12 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   if (!email || !password) {
     return res.status(400).json(new apiResponse(400, null, "Email and password are required"));
   }
+  if (!isValidEmail(email)) {
+    return res.status(400).json(new apiResponse(400, null, "Please provide a valid email address"));
+  }
 
-  // Find user
-  const user = await User.findOne({ email });
+  // Find user (lookup with normalized email)
+  const user = await User.findOne({ email: email.trim().toLowerCase() });
   if (!user) {
     return res.status(404).json(new apiResponse(404, null, "User does not exist"));
   }

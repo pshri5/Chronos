@@ -1,18 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { validateEmail } from '../utils/validators';
 
 export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (emailTouched) {
+      setEmailError(validateEmail(value).error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { valid, error: emailErr } = validateEmail(email);
+    setEmailTouched(true);
+    setEmailError(emailErr);
+    if (!valid) return;
     setLoading(true);
     setError(null);
     const result = await register(name, email, password);
@@ -76,12 +90,28 @@ export const RegisterPage: React.FC = () => {
               <input
                 type="email"
                 id="register-email"
-                className="input-field"
+                data-testid="register-email-input"
+                className={`input-field ${emailError ? 'ring-2 ring-red-500/60 border-red-500/60' : ''}`}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                onBlur={() => {
+                  setEmailTouched(true);
+                  setEmailError(validateEmail(email).error);
+                }}
                 placeholder="name@company.com"
                 required
+                aria-invalid={!!emailError}
+                aria-describedby={emailError ? 'register-email-error' : undefined}
               />
+              {emailError && (
+                <p
+                  id="register-email-error"
+                  data-testid="register-email-error"
+                  className="text-xs font-semibold text-red-400 ml-1 mt-1 animate-slide-up"
+                >
+                  {emailError}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
