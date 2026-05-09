@@ -2,7 +2,7 @@
 
 Chronos is a full-stack job management platform designed to schedule, execute, and monitor background tasks. It provides a comprehensive system for managing one-time and recurring jobs with integrated logging and user notifications.
 
-## 🚀 Project Overview
+## Project Overview
 
 ### Backend
 The backend is a Node.js/Express server built with TypeScript and MongoDB.
@@ -21,7 +21,7 @@ A modern React-based dashboard built with Vite, TypeScript, and Tailwind CSS.
   - **Rich UI**: Premium design system with dark mode, glassmorphism, and smooth animations.
   - **Log Explorer**: Deep dive into execution history for debugging.
 
-## 🏗️ System Architecture
+## System Architecture
 
 Chronos uses a decoupled architecture to ensure scalability and ease of deployment.
 
@@ -44,7 +44,7 @@ graph TD
 - **Tailwind CSS + Glassmorphism**: Selected to create a "Premium" aesthetic while maintaining a lightweight CSS bundle. Utility classes allow for rapid UI iteration without leaving the HTML.
 - **Stateless Authentication**: Uses JWTs stored in the frontend to handle sessions, allowing the backend to remain stateless and easily scalable.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 | :--- | :--- |
@@ -55,7 +55,7 @@ graph TD
 | **Authentication** | JSON Web Tokens (JWT), bcrypt |
 | **Testing** | Vitest, Supertest |
 
-## 🚦 Getting Started
+## Getting Started
 
 ### Local Development
 
@@ -86,7 +86,7 @@ docker-compose up -d --build
 ```
 *The application will be available at `http://localhost`.*
 
-## 📜 API Documentation
+## API Documentation
 
 ### Authentication
 #### `POST /api/v1/users/register`
