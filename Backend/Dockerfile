@@ -32,5 +32,5 @@ COPY --from=builder /app/package.json ./package.json
 # Drop privileges
 USER node
 
-EXPOSE 8000
+EXPOSE 8001
 CMD ["node", "dist/index.js"]

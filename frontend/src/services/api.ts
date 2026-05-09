@@ -1,6 +1,9 @@
 import axios, { AxiosError } from 'axios';
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || `${import.meta.env.REACT_APP_BACKEND_URL || ''}/api/v1`;
+// VITE_API_URL is supplied at build time. In production the frontend is
+// served behind a reverse-proxy that forwards /api/* to the backend, so the
+// relative '/api/v1' default works without any host/CORS configuration.
+const BACKEND_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 const api = axios.create({
   baseURL: BACKEND_URL,

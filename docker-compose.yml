@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      PORT: 8000
+      PORT: 8001
       MONGODB_URI: mongodb://mongo:27017/chronos
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
       ACCESS_TOKEN_EXPIRY: ${ACCESS_TOKEN_EXPIRY:-15m}
