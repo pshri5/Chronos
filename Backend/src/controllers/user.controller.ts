@@ -72,22 +72,12 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
     return res.status(409).json(new apiResponse(409, null, "User already exists with this email"));
   }
 
-<<<<<<< Updated upstream
-  // Hash password
-  // Password is hashed automatically by the User model's pre-save hook
-
   // Create user
+  // Password is hashed automatically by the User model's pre-save hook
   const user = await User.create({
     name,
     email: normalizedEmail,
     password
-=======
-  // Create user
-  const user = await User.create({
-    name,
-    email,
-    password // Let the model handle hashing
->>>>>>> Stashed changes
   });
 
   const createdUser = await User.findById(user._id).select("-password -refreshToken");

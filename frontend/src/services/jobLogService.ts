@@ -22,11 +22,7 @@ export const getJobLogs = async (jobId: string, params?: {
   sortOrder?: string;
 }) => {
   const response = await api.get(`/job-logs/job/${jobId}`, { params });
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Fetch recent job logs for the current user (across all jobs) with optional pagination
@@ -37,9 +33,5 @@ export const getRecentJobLogs = async (params?: {
   sortOrder?: string;
 }) => {
   const response = await api.get('/job-logs/recent', { params });
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };

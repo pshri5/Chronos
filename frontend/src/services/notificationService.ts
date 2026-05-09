@@ -24,31 +24,19 @@ export const getNotifications = async (params?: {
   sortOrder?: string;
 }) => {
   const response = await api.get('/notifications', { params });
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Mark a notification as read
 export const markNotificationAsRead = async (id: string) => {
   const response = await api.patch(`/notifications/${id}/read`);
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Mark all notifications as read
 export const markAllNotificationsAsRead = async () => {
   const response = await api.patch('/notifications/read-all');
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Delete a notification
@@ -59,9 +47,5 @@ export const deleteNotification = async (id: string) => {
 // Get unread count (optional, for badge)
 export const getUnreadCount = async () => {
   const response = await api.get('/notifications/unread-count');
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };

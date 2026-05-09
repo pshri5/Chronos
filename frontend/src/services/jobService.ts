@@ -29,41 +29,25 @@ export const getJobs = async (params?: {
   sortOrder?: string;
 }) => {
   const response = await api.get('/jobs', { params });
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Get a single job by ID
 export const getJob = async (id: string) => {
   const response = await api.get(`/jobs/${id}`);
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Create a new job
 export const createJob = async (jobData: Omit<Job, '_id' | 'createdAt' | 'updatedAt'>) => {
   const response = await api.post('/jobs', jobData);
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Update an existing job
 export const updateJob = async (id: string, jobData: Partial<Job>) => {
   const response = await api.patch(`/jobs/${id}`, jobData);
-<<<<<<< Updated upstream
   return unwrap(response);
-=======
-  return response.data.data;
->>>>>>> Stashed changes
 };
 
 // Delete a job

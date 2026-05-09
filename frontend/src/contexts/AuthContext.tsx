@@ -38,11 +38,9 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/login', { email, password });
-<<<<<<< Updated upstream
-      const { accessToken, user: userData } = response.data?.data ?? response.data;
-=======
-      const { accessToken, user: userData } = response.data.data;
->>>>>>> Stashed changes
+      const dataPayload = response.data?.data ?? response.data;
+      const { accessToken, user: userData } = dataPayload;
+      
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       setUser(userData);
@@ -56,22 +54,22 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await api.post('/users/register', { name, email, password });
-<<<<<<< Updated upstream
-      // Register only returns user; auto-login to get tokens
-      const registeredUser = response.data?.data ?? response.data;
-      if (!registeredUser?.accessToken) {
+      const dataPayload = response.data?.data ?? response.data;
+      
+      // If registration doesn't return tokens directly, try auto-login
+      if (!dataPayload?.accessToken) {
         const loginResp = await api.post('/users/login', { email, password });
-        const { accessToken: at, user: u } = loginResp.data?.data ?? loginResp.data;
-        localStorage.setItem('token', at);
-        setToken(at);
-        setUser(u);
-        api.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+        const loginData = loginResp.data?.data ?? loginResp.data;
+        const { accessToken, user: userData } = loginData;
+        
+        localStorage.setItem('token', accessToken);
+        setToken(accessToken);
+        setUser(userData);
+        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         return { success: true };
       }
-      const { accessToken, user: userData } = registeredUser;
-=======
-      const { accessToken, user: userData } = response.data.data;
->>>>>>> Stashed changes
+      
+      const { accessToken, user: userData } = dataPayload;
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       setUser(userData);

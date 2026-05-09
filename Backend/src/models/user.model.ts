@@ -24,14 +24,8 @@ const userSchema: Schema<IUser> = new Schema<IUser>({
 
 // Hashing password before saving
 userSchema.pre("save", async function (this: any) {
-<<<<<<< Updated upstream
     if (!this.isModified("password")) return; // preventing rehashing of the password
 
-    // Ensure password exists before hashing
-=======
-    if (!this.isModified("password")) return;
-
->>>>>>> Stashed changes
     if (this.password) {
         this.password = await bcrypt.hash(this.password, 10);
     }
