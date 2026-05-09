@@ -6,6 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prestart": "pnpm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage"
   },
@@ -15,6 +18,13 @@
   "author": "Preetam Shri",
   "license": "MIT",
   "packageManager": "pnpm@10.33.2",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bcrypt",
+      "esbuild",
+      "mongodb-memory-server"
+    ]
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",

@@ -6,11 +6,11 @@ RUN corepack enable
 
 WORKDIR /app
 
-# Install deps
+# Install deps (cache-friendly)
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-# Build static SPA
+# Copy source and build
 COPY . .
 ARG VITE_API_URL=/api/v1
 ENV VITE_API_URL=$VITE_API_URL
@@ -19,6 +19,7 @@ RUN pnpm run build
 # ---------- Runtime stage ----------
 FROM nginx:alpine AS runtime
 
+# Custom nginx: SPA fallback + /api reverse proxy
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 
