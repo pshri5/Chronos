@@ -5,6 +5,7 @@ import userRoutes from "./routes/user.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import jobLogRoutes from "./routes/jobLog.routes.js";
 import healthRoutes from "./routes/health.routes.js";
+import { connectDB } from "./db/index.js";
 
 const app = express();
 
@@ -15,6 +16,16 @@ app.use(cors({
 }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.json({ limit: "16kb" }));
+
+// Ensure DB connection before routes
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Routes
 app.use("/api/v1/users", userRoutes);
